@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site com Vídeo de Fundo Rolável</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    height: 2000px; /* Apenas para simular uma página longa para testar a rolagem */
+    background: #000;
+  }
+  
+  .video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+  }
+  
+  video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+  }
+</style>
+</head>
+<body>
+
+<div class="video-container">
+  <video id="background-video" loop muted>
+    <source src="https://github.com/Dunegerb/eff357-5517806-0--54-2--444/issues/1#issue-2191029039" type="video/mp4">
+    Desculpe, seu navegador não suporta vídeos HTML5.
+  </video>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var video = document.getElementById('background-video');
+  
+  // Função para animar a rolagem suave
+  function smoothScroll(target, duration) {
+    var targetPosition = target.getBoundingClientRect().top;
+    var startPosition = window.pageYOffset;
+    var distance = targetPosition - startPosition;
+    var startTime = null;
+
+    function animation(currentTime) {
+      if (startTime === null) startTime = currentTime;
+      var timeElapsed = currentTime - startTime;
+      var run = ease(timeElapsed, startPosition, distance, duration);
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+
+    function ease(t, b, c, d) {
+      t /= d / 2;
+      if (t < 1) return c / 2 * t * t + b;
+      t--;
+      return -c / 2 * (t * (t - 2) - 1) + b;
+    }
+
+    requestAnimationFrame(animation);
+  }
+
+  // Adiciona evento de clique para rolar suavemente até o topo da página
+  document.addEventListener('scroll', function () {
+    var value = window.scrollY;
+    var videoTime = (value / (document.body.clientHeight - window.innerHeight)) * video.duration;
+    video.currentTime = videoTime;
+  });
+
+  // Adiciona evento de clique para rolar suavemente até o topo da página
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      var target = document.querySelector(this.getAttribute('href'));
+      smoothScroll(target, 1000);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
